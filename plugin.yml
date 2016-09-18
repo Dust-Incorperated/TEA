@@ -2,4 +2,4 @@ main: net.dusterthefirst.TEA.Main
 version: SB0.1.0
 name: TEA
 author: DusterTheFirst
-description: Simple Spigot Coding Language Based Off Of JAVA
+description: Simple Spigot Coding Language Based Off Of LUA
