@@ -1,18 +1,19 @@
 package net.dusterthefirst.TEA;
 
-import java.util.ArrayList;
+import java.io.File;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import net.dusterthefirst.TEA.interpreter.Parser;
 import net.dusterthefirst.TEA.update.Checker;
-import net.dusterthefirst.TEA.utils.CustomCommand;
 
-public class Main extends JavaPlugin{
+public class Main extends JavaPlugin implements Listener{
 	
 	//DONT FORGET THE PLUGIN.YML
 	
@@ -23,15 +24,36 @@ public class Main extends JavaPlugin{
 	
 	@Override
 	public void onEnable(){
-		FileManager.init(this.getDataFolder());
+		//Does Intit Stuff
+		getServer().getPluginManager().registerEvents(this, this);
+		getConfig().options().copyDefaults(true);
+		saveDefaultConfig();
+		
+		//Gets Colors For Console
+		String infoColor = getConfig().getString("Console.InfoColor");
+		String errColor = getConfig().getString("Console.ErrorColor");
+		
+		//MAKES AND GETS ALL FILES
+		FileManager.init(this.getDataFolder(), infoColor, errColor);
 		FileManager.makeFiles();
 		FileManager.getFiles();
-		CustomCommand command = new CustomCommand(DOWNLOADURL, DOWNLOADURL, DOWNLOADURL, DOWNLOADURL, new ArrayList<String>(21));
-		sendConsoleAMsg(ChatColor.GREEN + command.toString());
-		command.addAlias("yomamma");
-		command.addAlias("dis is cool");
-		command.setPermMessage("You Just Cant");
-		sendConsoleAMsg(ChatColor.DARK_GREEN + command.toString());
+		
+		//Loops Through Each File In The Scripts Folder
+		for(File f: FileManager.scriptManager.getFiles()){
+			//Parses It
+			String parsed = Parser.parse(f, infoColor, errColor);
+		}
+		
+		
+		//TODO Remove TEST
+		//ABSRACT COMMAND TEST
+//		CustomCommand command = new CustomCommand(DOWNLOADURL, DOWNLOADURL, DOWNLOADURL, DOWNLOADURL, new ArrayList<String>(21));
+//		sendConsoleAMsg(ChatColor.GREEN + command.toString());
+//		command.addAlias("yomamma");
+//		command.addAlias("dis is cool");
+//		command.setPermMessage("You Just Cant");
+//		sendConsoleAMsg(ChatColor.DARK_GREEN + command.toString());
+//		command.register();
 		
 		
 		//Timed Update Warn
@@ -55,6 +77,7 @@ public class Main extends JavaPlugin{
 		return false;
 	}
 	
+	//Sends A Message To The Console, With Chat Colors
 	public static boolean sendConsoleAMsg(String msg) {
         try {
             Bukkit.getServer().getConsoleSender().sendMessage(msg);
