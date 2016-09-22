@@ -7,5 +7,6 @@ The Code Behind Spigot TEA
 # Please Fork And Show Us Where We Went Wrong, Or Where We Could Improve
 
 <hr>
-
+<sub>
 <a href="https://github.com/DusterTheFirst/TEA/blob/master/License.md">Copyright 2016 DusterTheFirst</a>
+</sub>
