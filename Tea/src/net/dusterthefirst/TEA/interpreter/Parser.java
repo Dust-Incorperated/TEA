@@ -45,9 +45,8 @@ public class Parser {
 				parseVariable(s, line, f);
 			//Checks If The Line Starts With Function
 			}else if(s.startsWith("function")){
-				//TODO Parse Function Into Function HashMap
-				Function function = new Function();
-				functions.put("", function);
+				//Parses Function Into Function HashMap
+				parseFunction(s, line, f, lines);
 			//Checks If The Line Starts With While
 			}else if(s.startsWith("while")){
 				//TODO Parse Into Flow
@@ -122,6 +121,56 @@ public class Parser {
 		}
 	}
 
+	//Parses A Function
+	private static void parseFunction(String s, int line, File f, ArrayList<String> lines) {
+		//Catches If There Is An Error
+		try {
+			//Creates A New Function
+			Function function = new Function();
+			//Removes The 'Function' From The Line
+			s = s.replace("function ", "");
+			//Splits The Function By Name And Values
+			String[] split = s.split("\\(", 2);
+			//Sets Name Of The Function
+			function.name = split[0];
+			//Splits The Variables
+			String[] vars = split[1].split(",");
+			//Loops Through All Variables
+			for(String var : vars){
+				//removes Whitespace
+				var = var.trim();
+				//New Variable
+				Variable varr = new Variable();
+				//Removes End )
+				if(var.endsWith(")")){
+					var = var.replace(")", "");
+				}
+				//Sets Variables name
+				varr.name = var;
+				//Sets Value To Null
+				varr.value = null;
+				//Adds Variables To The Function
+				function.variables.add(varr);
+			}
+			//Loops Through All Lines UNDER The Function Declaration
+			for(String line1 : lines.subList(line, lines.size())){
+				line1 = line1.trim();
+				//Checks If The Line Is End
+				if(line1.equalsIgnoreCase("end")){
+					break;
+				}
+				//Adds Current Line To The Code
+				function.code.add(line1);
+			}
+			//Adds The Function To The Function Hash Map
+			functions.put(function.name, function);
+			//Logs Finding Of The Function
+			logger.log(ChatColor.RED + "Function " + function.name + ", And A Value Of " + function.code.toString() + ", And Variables Set As " + function.variables.toString(), f.getName());
+		} catch (Exception e) {
+			logger.error("Error In Declairing A Function At Line " + line, f.getName());
+		}
+	}
+	
 	//Reads The Given
 	private static ArrayList<String> readFile(File f){
 		//Makes A New ArrayList To Store The File Contents
