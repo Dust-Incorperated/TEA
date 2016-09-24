@@ -59,7 +59,7 @@ public class Main extends JavaPlugin implements Listener{
 			//Loops Through Each File In The Scripts Folder
 			for(File f: FileManager.scriptManager.getFiles()){
 				//Parses It
-				ParsedCode parsed = Parser.parse(f, infoColor, errColor);
+				ParsedCode parsed = Parser.parse(f);
 				System.out.println(parsed);
 			}
 			

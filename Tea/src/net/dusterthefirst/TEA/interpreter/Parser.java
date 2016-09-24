@@ -29,7 +29,7 @@ public class Parser {
 	static TEALogger logger = new TEALogger();
 	
 	//Parses The Given File
-	public static ParsedCode parse(File f, String infoColor, String errColor){
+	public static ParsedCode parse(File f){
 		Map<String, Variable> variables = new HashMap<>();
 		Map<String, Function> functions = new HashMap<>();
 		List<Flow> flows = new ArrayList<>();
