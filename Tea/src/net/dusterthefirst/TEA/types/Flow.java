@@ -2,10 +2,13 @@ package net.dusterthefirst.TEA.types;
 
 public class Flow {
 	
-	public String type;
+	private final String type;
 
-	public Flow() {
-		
+	public Flow(String type) {
+		this.type = type;
 	}
 	
+	public String getType() {
+		return type;
+	}
 }
