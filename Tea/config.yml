@@ -1,3 +1,4 @@
 Console:
     ErrorColor: "&c"
     InfoColor: "&3"
+    DebugColor: "&e"

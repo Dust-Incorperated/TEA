@@ -28,7 +28,7 @@ public class Parser {
 	//Parses The Given File
 	public static String parse(File f, String infoColor, String errColor){
 		//Makes New Logger
-		logger = new TEALogger(errColor, infoColor);
+		logger = new TEALogger();
 		//Gets Lines From File
 		ArrayList<String> lines = readFile(f);
 		//Sets The Working Line To 1

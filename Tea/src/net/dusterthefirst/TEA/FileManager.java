@@ -57,7 +57,7 @@ public class FileManager {
 	//Initializes All File Managers To The Plugins DataFolder
 	public static void init(File dataFolder, String infoColor, String errColor) {
 		//Sets Logger Colors
-		logger = new TEALogger(errColor, infoColor);
+		logger = new TEALogger();
 		//Initializes The Data Folder
 		data = dataFolder;
 		//Initializes All Managers

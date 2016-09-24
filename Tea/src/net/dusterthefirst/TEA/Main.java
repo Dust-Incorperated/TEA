@@ -1,6 +1,7 @@
 package net.dusterthefirst.TEA;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,7 +12,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.dusterthefirst.TEA.interpreter.Parser;
+import net.dusterthefirst.TEA.logger.TEALogger;
 import net.dusterthefirst.TEA.update.Checker;
+import net.dusterthefirst.TEA.utils.GenericUtils;
+import net.dusterthefirst.TEA.utils.internal.TEACmd;
 
 public class Main extends JavaPlugin implements Listener{
 	
@@ -32,6 +36,35 @@ public class Main extends JavaPlugin implements Listener{
 		//Gets Colors For Console
 		String infoColor = getConfig().getString("Console.InfoColor");
 		String errColor = getConfig().getString("Console.ErrorColor");
+		String debugColor = getConfig().getString("Console.DebugColor");
+		//Sets Color For The Console
+		TEALogger.setColors(infoColor, errColor, debugColor);
+		
+		//Makes Logger Instance
+		TEALogger logger = new TEALogger();
+		//Logs All The Debug Info
+		logger.logDebugInfo();
+		
+		//Makes And Registers The TEA Command
+		TEACmd teaCmd = new TEACmd();
+		teaCmd.register();
+		
+		//TEST EXEPTION THROWER
+		try {
+			throw new IOException();
+		} catch (Throwable e) {
+			String trace = GenericUtils.StacktraceToString(e.getStackTrace());
+			logger.error(ChatColor.RED + "OH NOES!!! TEA CRASHED", "Loader");
+			logger.error(ChatColor.RED + "There Has Been An Uncaught Exeption In TEA", "Loader");
+			logger.error(ChatColor.RED + "Make Sure You Are Running The Latest Version Of TEA", "Loader");
+			logger.error(ChatColor.RED + "PLEASE SEND THE BELOW INFORMATION BETWEEN THE LINES TO THE DEVELOPER THROUGH THE LINK BELOW", "logger");
+			logger.error(ChatColor.RED + "https://github.com/DusterTheFirst/TEA/issues", "Loader");
+			logger.error(ChatColor.RED + "-----------------------------------", "Loader");
+			logger.error(ChatColor.YELLOW + trace, "Loader");
+			logger.logDebugInfo();
+			logger.error(ChatColor.RED + "-----------------------------------", "Loader");
+		}
+		
 		
 		//MAKES AND GETS ALL FILES
 		FileManager.init(this.getDataFolder(), infoColor, errColor);
