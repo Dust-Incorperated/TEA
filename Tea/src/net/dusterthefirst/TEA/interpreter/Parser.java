@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.dusterthefirst.TEA.logger.TEALogger;
 import net.dusterthefirst.TEA.types.Flow;
@@ -15,6 +17,11 @@ import net.dusterthefirst.TEA.types.Variable;
 import net.md_5.bungee.api.ChatColor;
 
 public class Parser {
+	
+	private static final Pattern functionRegex = Pattern.compile("function\\s*\\w+\\s*\\(\\s*\\w+\\s*(,\\s*\\w*)*\\s*\\)");
+	private static final Pattern variableRegex = Pattern.compile("var\\s*(\\w+(\\s*=\\s*((\"(.*\\s*)\")|([0-9]*)))*)");
+	private static final Pattern conditionalRegex = Pattern.compile("(while|if)\\s*\\(.+\\)");
+	/* I am not sure how the "for" loop is going to be syntaxed. I shall write a RegEx when necessary */
 
 	//Makes Variables hashMap
 	static HashMap<String, Variable> variables = new HashMap<>();
@@ -37,70 +44,30 @@ public class Parser {
 		int line = 1;
 		//Loops Through All Lines And Parses Variables
 		for(String s : lines){
-			//Gets Rid Of All Leading And Trailing Whitespace
-			s = s.trim();
-			//Makes All Characters Lowercase, So The Language Is Not Case Sensitive
-			s = s.toLowerCase();
-			//Checks If The Line Starts With Var
-			if(s.startsWith("var")){
-				//Parses The Variable Into The Variable HashMap
+			Matcher variableMatcher = variableRegex.matcher(s);
+			Matcher functionMatcher = functionRegex.matcher(s);
+			Matcher conditionalMatcher = conditionalRegex.matcher(s);
+			
+			// Attempt to parse a variable
+			if (variableMatcher.matches()){
 				parseVariable(s, line, f);
 			}
-			//Sets Working Line To the Current Line +1
-			line++;
-		}
-		//Sets The Working Line To 1
-		line = 1;
-		//Loops Through All Lines And Parses Loops
-		for(String s : lines){
-			//Gets Rid Of All Leading And Trailing Whitespace
-			s = s.trim();
-			//Makes All Characters Lowercase, So The Language Is Not Case Sensitive
-			s = s.toLowerCase();
-			//Checks If The Line Starts With While
-			if(s.startsWith("while")){
-				//Parse Loop
-				parseLoop("while", s, line, f, lines);
-			//Checks If The Line Starts With If
-			}else if(s.startsWith("if")){
-				//Parse Loop
-				parseLoop("if", s, line, f, lines);
-			//Checks If The Line Starts With For
-			}else if(s.startsWith("for")){
-				//Parse Loop
-				parseLoop("for", s, line, f, lines);
+			
+			// Attempt to parse a conditional (if, while, for)
+			else if (conditionalMatcher.matches()){
+				parseLoop(conditionalMatcher.group(1), s, line, f, lines);
 			}
-			//Sets Working Line To the Current Line +1
-			line++;
-		}
-		//Sets The Working Line To 1
-		line = 1;
-		//Loops Through All Lines And Parses Functions
-		for(String s : lines){
-			//Gets Rid Of All Leading And Trailing Whitespace
-			s = s.trim();
-			//Makes All Characters Lowercase, So The Language Is Not Case Sensitive
-			s = s.toLowerCase();
-			//Checks If The Line Starts With Function
-			if(s.startsWith("function")){
-				//Parses Function Into Function HashMap
+			
+			// Attempt to parse a function
+			else if (functionMatcher.matches()){
 				parseFunction(s, line, f, lines);
 			}
-			//Sets Working Line To the Current Line +1
-			line++;
-		}
-		//Sets The Working Line To 1
-		line = 1;
-		//Loops Through All Lines And Parses Functions
-		for(String s : lines){
-			//Gets Rid Of All Leading And Trailing Whitespace
-			s = s.trim();
-			//Makes All Characters Lowercase, So The Language Is Not Case Sensitive
-			s = s.toLowerCase();
-			//Checks If The Line Starts With Function
-			if(!s.startsWith("function") && !s.startsWith("for") && !s.startsWith("if") && !s.startsWith("while") && !s.startsWith("var")){
+			
+			// If all else fails, render it as a piece of code
+			else{
 				codes.add(s);
 			}
+			
 			//Sets Working Line To the Current Line +1
 			line++;
 		}
@@ -120,6 +87,7 @@ public class Parser {
 
 	//Parses A Variable
 	private static void parseVariable(String s, int line, File f) {
+		s = s.trim().toLowerCase();
 		try{
 			//Creates A New Variable
 			Variable var = new Variable();
@@ -170,6 +138,7 @@ public class Parser {
 
 	//Parses A Function
 	private static void parseFunction(String s, int line, File f, ArrayList<String> lines) {
+		s = s.trim().toLowerCase();
 		//Catches If There Is An Error
 		try {
 			//Creates A New Function
