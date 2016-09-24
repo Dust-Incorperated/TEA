@@ -3,6 +3,7 @@ package net.dusterthefirst.TEA.utils.internal;
 import java.io.File;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -10,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import com.google.common.collect.Lists;
 
 import net.dusterthefirst.TEA.FileManager;
+import net.dusterthefirst.TEA.Main;
 import net.dusterthefirst.TEA.utils.AbstractCommand;
 
 /** The core TEA command.
@@ -34,7 +36,10 @@ public class TEACmd extends AbstractCommand {
 			if (args[0].equalsIgnoreCase("scripts")){
 				if (args.length >= 2){
 					if (args[1].equalsIgnoreCase("reload")){
-						FileManager.getFiles();
+						//FileManager.getFiles();
+						//Reloads The Plugin
+						Bukkit.getPluginManager().disablePlugin(Main.getPlugin(Main.class));
+						Bukkit.getPluginManager().enablePlugin(Main.getPlugin(Main.class));
 						// Not sure whether a prefix is set or not. a Main#sendMessage() method is suggested here
 						sender.sendMessage(ChatColor.GREEN + "All TEA scripts have been reloaded");
 					}

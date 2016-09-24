@@ -10,30 +10,32 @@ import java.util.HashMap;
 import net.dusterthefirst.TEA.logger.TEALogger;
 import net.dusterthefirst.TEA.types.Flow;
 import net.dusterthefirst.TEA.types.Function;
+import net.dusterthefirst.TEA.types.ParsedCode;
 import net.dusterthefirst.TEA.types.Variable;
 import net.md_5.bungee.api.ChatColor;
 
 public class Parser {
 
-	static HashMap<Object, Object> values = new HashMap<>();
 	//Makes Variables hashMap
 	static HashMap<String, Variable> variables = new HashMap<>();
 	//Makes Functions HashMap
 	static HashMap<String, Function> functions = new HashMap<>();
 	//Holds All Flow Things
 	static ArrayList<Flow> flows = new ArrayList<>();
+	//Holds All Lines Of Code Thats Not One Of The Above
+	static ArrayList<String> codes = new ArrayList<>();
 	//Makes Logger
 	static TEALogger logger;
 	
 	//Parses The Given File
-	public static String parse(File f, String infoColor, String errColor){
+	public static ParsedCode parse(File f, String infoColor, String errColor){
 		//Makes New Logger
 		logger = new TEALogger();
 		//Gets Lines From File
 		ArrayList<String> lines = readFile(f);
 		//Sets The Working Line To 1
 		int line = 1;
-		//Loops Through All Lines
+		//Loops Through All Lines And Parses Variables
 		for(String s : lines){
 			//Gets Rid Of All Leading And Trailing Whitespace
 			s = s.trim();
@@ -43,81 +45,126 @@ public class Parser {
 			if(s.startsWith("var")){
 				//Parses The Variable Into The Variable HashMap
 				parseVariable(s, line, f);
-			//Checks If The Line Starts With Function
-			}else if(s.startsWith("function")){
-				//Parses Function Into Function HashMap
-				parseFunction(s, line, f, lines);
-			//Checks If The Line Starts With While
-			}else if(s.startsWith("while")){
-				//TODO Parse Into Flow
-				Flow flow = new Flow();
-				flow.type = "while";
-				flows.add(flow);
-			//Checks If The Line Starts With If
-			}else if(s.startsWith("if")){
-				//TODO Parse Into Flow
-				Flow flow = new Flow();
-				flow.type = "while";
-				flows.add(flow);
-			//Checks If The Line Starts With For
-			}else if(s.startsWith("for")){
-				//TODO Parse Into Flow
-				Flow flow = new Flow();
-				flow.type = "while";
-				flows.add(flow);
 			}
-			//TODO REMOVE
-			System.out.println(s);
 			//Sets Working Line To the Current Line +1
 			line++;
 		}
-		//TODO FIX
-		return null;
+		//Sets The Working Line To 1
+		line = 1;
+		//Loops Through All Lines And Parses Loops
+		for(String s : lines){
+			//Gets Rid Of All Leading And Trailing Whitespace
+			s = s.trim();
+			//Makes All Characters Lowercase, So The Language Is Not Case Sensitive
+			s = s.toLowerCase();
+			//Checks If The Line Starts With While
+			if(s.startsWith("while")){
+				//Parse Loop
+				parseLoop("while", s, line, f, lines);
+			//Checks If The Line Starts With If
+			}else if(s.startsWith("if")){
+				//Parse Loop
+				parseLoop("if", s, line, f, lines);
+			//Checks If The Line Starts With For
+			}else if(s.startsWith("for")){
+				//Parse Loop
+				parseLoop("for", s, line, f, lines);
+			}
+			//Sets Working Line To the Current Line +1
+			line++;
+		}
+		//Sets The Working Line To 1
+		line = 1;
+		//Loops Through All Lines And Parses Functions
+		for(String s : lines){
+			//Gets Rid Of All Leading And Trailing Whitespace
+			s = s.trim();
+			//Makes All Characters Lowercase, So The Language Is Not Case Sensitive
+			s = s.toLowerCase();
+			//Checks If The Line Starts With Function
+			if(s.startsWith("function")){
+				//Parses Function Into Function HashMap
+				parseFunction(s, line, f, lines);
+			}
+			//Sets Working Line To the Current Line +1
+			line++;
+		}
+		//Sets The Working Line To 1
+		line = 1;
+		//Loops Through All Lines And Parses Functions
+		for(String s : lines){
+			//Gets Rid Of All Leading And Trailing Whitespace
+			s = s.trim();
+			//Makes All Characters Lowercase, So The Language Is Not Case Sensitive
+			s = s.toLowerCase();
+			//Checks If The Line Starts With Function
+			if(!s.startsWith("function") && !s.startsWith("for") && !s.startsWith("if") && !s.startsWith("while") && !s.startsWith("var")){
+				codes.add(s);
+			}
+			//Sets Working Line To the Current Line +1
+			line++;
+		}
+		
+		//Returns The Parsed Code
+		ParsedCode parsedCode = new ParsedCode();
+		parsedCode.variables = variables;
+		parsedCode.functions = functions;
+		parsedCode.flows = flows;
+		parsedCode.codes = codes;
+		return parsedCode;
 	}
 	
+	private static void parseLoop(String string, String s, int line, File f, ArrayList<String> lines) {
+		logger.log(ChatColor.YELLOW + "Coming Soon", "Parser");
+	}
+
 	//Parses A Variable
 	private static void parseVariable(String s, int line, File f) {
-		//Creates A New Variable
-		Variable var = new Variable();
-		//Removes The Var From The Line
-		s = s.replaceFirst("var ", "");
-		//Splits The Line By The = Sign
-		String[] split = s.split("=", 2);
-		//Loops Through All The Split Line
-		for(int i = 0; i < split.length; i++){
-			//Removes All Leading And Trailing Whitespace
-			split[i] = split[i].trim();
-		}
-		//Checks If The Variable Has A Value And A Name
-		if(split.length == 2){
-			//Sets The Variables Name To The Item Before The = Sign
-			var.name = split[0];
-			//Checks If Value Is A String
-			if(split[1].startsWith("\"") && split[1].endsWith("\"")){
-				//Sets Value = To String Value
-				var.value = split[1];
-			//If Not A String
-			}else{
-				//It Will Attempt To Parse The Integer
-				try {
-					//Parses Integer And Sets The Variables Value To The Integer
-					var.value = Integer.parseInt(split[1]);
-				//Catches Any Exceptions
-				} catch (Exception e) {
-					//Logs An Error
-					logger.error(ChatColor.RED + "ERROR IN " + f.getName() + ", AT LINE " + line, f.getName());
-					logger.error(ChatColor.RED + "Canot Parse Integer", f.getName());
-				}
+		try{
+			//Creates A New Variable
+			Variable var = new Variable();
+			//Removes The Var From The Line
+			s = s.replaceFirst("var ", "");
+			//Splits The Line By The = Sign
+			String[] split = s.split("=", 2);
+			//Loops Through All The Split Line
+			for(int i = 0; i < split.length; i++){
+				//Removes All Leading And Trailing Whitespace
+				split[i] = split[i].trim();
 			}
-			//Logs The Variables Value And Name
-			logger.log("Variable " + var.name + " Found, With A Value Of, " + var.value, f.getName());
-			//Adds The Variable To The Variables Hash Map
-			variables.put(var.name, var);
-		//If The Var Doesn't Have A Name Or A Value
-		}else{
-			//Logs An Error
-			logger.error(ChatColor.RED + "ERROR IN " + f.getName() + ", AT LINE " + line, f.getName());
-			logger.error(ChatColor.RED + "Variable Missing Name Or Value", f.getName());
+			//Checks If The Variable Has A Value And A Name
+			if(split.length == 2){
+				//Sets The Variables Name To The Item Before The = Sign
+				var.name = split[0];
+				//Checks If Value Is A String
+				if(split[1].startsWith("\"") && split[1].endsWith("\"")){
+					//Sets Value = To String Value
+					var.value = split[1];
+				//If Not A String
+				}else{
+					//It Will Attempt To Parse The Integer
+					try {
+						//Parses Integer And Sets The Variables Value To The Integer
+						var.value = Integer.parseInt(split[1]);
+					//Catches Any Exceptions
+					} catch (Exception e) {
+						//Logs An Error
+						logger.error(ChatColor.RED + "ERROR IN " + f.getName() + ", AT LINE " + line, f.getName());
+						logger.error(ChatColor.RED + "Canot Parse Integer", f.getName());
+					}
+				}
+				//Logs The Variables Value And Name
+				logger.log("Variable " + var.name + " Found, With A Value Of, " + var.value, f.getName());
+				//Adds The Variable To The Variables Hash Map
+				variables.put(var.name, var);
+			//If The Var Doesn't Have A Name Or A Value
+			}else{
+				//Logs An Error
+				logger.error(ChatColor.RED + "ERROR IN " + f.getName() + ", AT LINE " + line, f.getName());
+				logger.error(ChatColor.RED + "Variable Missing Name Or Value", f.getName());
+			}
+		} catch (Exception e) {
+			logger.error(ChatColor.RED + "Error In Declairing A Variable At Line " + line, f.getName());
 		}
 	}
 
@@ -165,9 +212,9 @@ public class Parser {
 			//Adds The Function To The Function Hash Map
 			functions.put(function.name, function);
 			//Logs Finding Of The Function
-			logger.log(ChatColor.RED + "Function " + function.name + ", And A Value Of " + function.code.toString() + ", And Variables Set As " + function.variables.toString(), f.getName());
+			logger.log("Function " + function.name + ", And A Value Of " + function.code.toString() + ", And Variables Set As " + function.variables.toString(), f.getName());
 		} catch (Exception e) {
-			logger.error("Error In Declairing A Function At Line " + line, f.getName());
+			logger.error(ChatColor.RED + "Error In Declairing A Function At Line " + line, f.getName());
 		}
 	}
 	

@@ -1,7 +1,6 @@
 package net.dusterthefirst.TEA;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.dusterthefirst.TEA.interpreter.Parser;
 import net.dusterthefirst.TEA.logger.TEALogger;
+import net.dusterthefirst.TEA.types.ParsedCode;
 import net.dusterthefirst.TEA.update.Checker;
 import net.dusterthefirst.TEA.utils.GenericUtils;
 import net.dusterthefirst.TEA.utils.internal.TEACmd;
@@ -45,13 +45,24 @@ public class Main extends JavaPlugin implements Listener{
 		//Logs All The Debug Info
 		logger.logDebugInfo();
 		
-		//Makes And Registers The TEA Command
-		TEACmd teaCmd = new TEACmd();
-		teaCmd.register();
-		
-		//TEST EXEPTION THROWER
 		try {
-			throw new IOException();
+			
+			//Makes And Registers The TEA Command
+			TEACmd teaCmd = new TEACmd();
+			teaCmd.register();
+			
+			//MAKES AND GETS ALL FILES
+			FileManager.init(this.getDataFolder(), infoColor, errColor);
+			FileManager.makeFiles();
+			FileManager.getFiles();
+			
+			//Loops Through Each File In The Scripts Folder
+			for(File f: FileManager.scriptManager.getFiles()){
+				//Parses It
+				ParsedCode parsed = Parser.parse(f, infoColor, errColor);
+				System.out.println(parsed);
+			}
+			
 		} catch (Throwable e) {
 			String trace = GenericUtils.StacktraceToString(e.getStackTrace());
 			logger.error(ChatColor.RED + "OH NOES!!! TEA CRASHED", "Loader");
@@ -64,19 +75,6 @@ public class Main extends JavaPlugin implements Listener{
 			logger.logDebugInfo();
 			logger.error(ChatColor.RED + "-----------------------------------", "Loader");
 		}
-		
-		
-		//MAKES AND GETS ALL FILES
-		FileManager.init(this.getDataFolder(), infoColor, errColor);
-		FileManager.makeFiles();
-		FileManager.getFiles();
-		
-		//Loops Through Each File In The Scripts Folder
-		for(File f: FileManager.scriptManager.getFiles()){
-			//Parses It
-			String parsed = Parser.parse(f, infoColor, errColor);
-		}
-		
 		
 		//TODO Remove TEST
 		//ABSRACT COMMAND TEST
