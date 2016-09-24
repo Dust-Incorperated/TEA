@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.dusterthefirst.TEA.interpreter.Parser;
 import net.dusterthefirst.TEA.update.Checker;
+import net.dusterthefirst.TEA.utils.internal.TEACmd;
 
 public class Main extends JavaPlugin implements Listener{
 	
@@ -54,6 +55,9 @@ public class Main extends JavaPlugin implements Listener{
 //		command.setPermMessage("You Just Cant");
 //		sendConsoleAMsg(ChatColor.DARK_GREEN + command.toString());
 //		command.register();
+		
+		TEACmd teaCmd = new TEACmd();
+		teaCmd.register();
 		
 		
 		//Timed Update Warn
