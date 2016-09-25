@@ -75,6 +75,7 @@ public class Parser {
 	
 	private static void parseLoop(String string, String s, int line, File f, ArrayList<String> lines) {
 		logger.log(ChatColor.YELLOW + "Coming Soon", "Parser");
+		logger.log(ChatColor.LIGHT_PURPLE + "stuff: " + string + "\n\rS:" + s , "POOPER");
 	}
 
 	//Parses A Variable
