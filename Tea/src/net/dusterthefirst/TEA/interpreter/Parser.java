@@ -22,7 +22,7 @@ public class Parser {
 	
 	private static final Pattern functionRegex = Pattern.compile("function\\s*\\w+\\s*\\(\\s*\\w+\\s*(,\\s*\\w*)*\\s*\\)");
 	private static final Pattern variableRegex = Pattern.compile("var\\s*(\\w+(\\s*=\\s*((\"(.*\\s*)\")|([0-9]*)))*)");
-	private static final Pattern conditionalRegex = Pattern.compile("(while|if)\\s*\\(.+\\)");
+	private static final Pattern conditionalRegex = Pattern.compile("(while|if)\\s+.+");
 	/* I am not sure how the "for" loop is going to be syntaxed. I shall write a RegEx when necessary */
 
 	//Makes Logger
@@ -41,6 +41,7 @@ public class Parser {
 		int line = 1;
 		//Loops Through All Lines And Parses Variables
 		for(String s : lines){
+			s = s.replaceAll("\\s+", "").toLowerCase();
 			Matcher variableMatcher = variableRegex.matcher(s);
 			Matcher functionMatcher = functionRegex.matcher(s);
 			Matcher conditionalMatcher = conditionalRegex.matcher(s);
