@@ -1,0 +1,19 @@
+#This Is Where You COnfigure The Plugin
+#Accounts Are Stored In The Accounts Folder
+#Welcome: Welcome Message For When You Join This Server
+#Incorrect: Message Given When Incorrect Message Entered
+#Help: Message Given When Player Executes /?
+#OP Only: Makes It So Only Operators Can Connect To This Server
+#Login Attempts: Amount Of Times People Can Put In An Incorrect Password Before Being Kicked
+Login:
+    Welcome: "Welcome To The Server, Please Login:"
+    Incorrect: "Wrong Passcode, Try Again"
+    Help: "This Server Is Protected By LockedServers"
+
+OP Only: 
+    Enabled: false
+    Kick Message: "You Are Not Allowed On This Server"
+    
+Login Attempts:
+    Amount: 5
+    Kick Message: "You Attempted To Login Incorrectly 5 Times"

@@ -16,6 +16,8 @@ import net.dusterthefirst.TEA.types.ParsedCode;
 import net.dusterthefirst.TEA.update.Checker;
 import net.dusterthefirst.TEA.utils.GenericUtils;
 import net.dusterthefirst.TEA.utils.internal.TEACmd;
+import net.dusterthefirst.TEA.variables.Variables;
+import net.dusterthefirst.TEA.variables.subsets.Test;
 
 public class Main extends JavaPlugin implements Listener{
 	
@@ -44,6 +46,7 @@ public class Main extends JavaPlugin implements Listener{
 		TEALogger logger = new TEALogger();
 		//Logs All The Debug Info
 		logger.logDebugInfo();
+		Variables.getAllVariables();
 		
 		try {
 			
