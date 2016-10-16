@@ -22,7 +22,7 @@ public class Parser {
 	
 	private static final Pattern functionRegex = Pattern.compile("function\\s*\\w+\\s*\\(\\s*\\w*\\s*(,\\s*\\w*)*\\s*\\)");
 	private static final Pattern variableRegex = Pattern.compile("var\\s*(\\w+(\\s*=\\s*((\"(.*\\s*)\")|([0-9]*)))*)");
-	private static final Pattern conditionalRegex = Pattern.compile("(while|if)\\s+.+");
+	private static final Pattern conditionalRegex = Pattern.compile("(while|if|for)\\s+.+");
 	/* I am not sure how the "for" loop is going to be syntaxed. I shall write a RegEx when necessary */
 
 	//Makes Logger
@@ -48,7 +48,7 @@ public class Parser {
 				line++;
 			}else{
 				logger.log("Parsing Line " + line, "Parser");
-				s = s.replaceAll("\\s+", "").toLowerCase();
+				s = s.trim();
 				Matcher variableMatcher = variableRegex.matcher(s);
 				Matcher functionMatcher = functionRegex.matcher(s);
 				Matcher conditionalMatcher = conditionalRegex.matcher(s);
@@ -73,7 +73,7 @@ public class Parser {
 				// If all else fails, render it as a piece of code
 				else{
 					codes.add(s);
-				}
+	 			}
 				
 				//Sets Working Line To the Current Line +1
 				line++;
@@ -84,9 +84,19 @@ public class Parser {
 		return new ParsedCode(variables, functions, flows, codes);
 	}
 	
-	private static int parseLoop(String string, String s, int line, File f, ArrayList<String> lines) {
-		logger.log(ChatColor.YELLOW + "Coming Soon", "Parser");
-		logger.log(ChatColor.LIGHT_PURPLE + "stuff: " + string + "\n\rS:" + s , "Parser");
+	private static int parseLoop(String type, String s, int line, File f, ArrayList<String> lines) {
+		if(type.equalsIgnoreCase("while")){
+			logger.log(ChatColor.YELLOW + "Coming Soon", "Parser");
+			logger.log(ChatColor.LIGHT_PURPLE + "Type: " + type + "\n\rLine:" + s , "Parser");
+		} else if(type.equalsIgnoreCase("if")){
+			logger.log(ChatColor.YELLOW + "Coming Soon", "Parser");
+			logger.log(ChatColor.LIGHT_PURPLE + "Type: " + type + "\n\rLine:" + s , "Parser");
+		} else if(type.equalsIgnoreCase("for")){
+			logger.log(ChatColor.YELLOW + "Coming Soon", "Parser");
+			logger.log(ChatColor.LIGHT_PURPLE + "Type: " + type + "\n\rLine:" + s , "Parser");
+		} else{
+			logger.error(ChatColor.RED + "Error In Declairing A Conditional At Line " + line, f.getName());
+		}
 		return line;
 	}
 
@@ -148,7 +158,7 @@ public class Parser {
 			//Splits The Function By Name And Values
 			String[] split = s.split("\\(", 2);
 			
-			Function function = new Function(split[0]);
+			Function function = new Function(split[0].trim());
 			
 			//Splits The Variables
 			String[] vars = split[1].split(",");
@@ -160,10 +170,13 @@ public class Parser {
 				if(var.endsWith(")")){
 					var = var.replace(")", "");
 				}
-				//Creates a new variable
-				Variable variable = new Variable(var, null);
-				//Adds Variables To The Function
-				function.getVariables().add(variable);
+				if(!var.equals("")){
+					//Creates a new variable
+					logger.log(var, "var");
+					Variable variable = new Variable(var, null);
+					//Adds Variables To The Function
+					function.getVariables().add(variable);
+				}
 			}
 			//Loops Through All Lines UNDER The Function Declaration
 			for(String line1 : lines.subList(line, lines.size())){

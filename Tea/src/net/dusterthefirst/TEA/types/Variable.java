@@ -27,6 +27,6 @@ public class Variable {
 	
 	@Override
 	public String toString() {
-		return "value = " + value;
+		return name + ":" + value;
 	}
 }
