@@ -40,7 +40,7 @@ public class Parser {
 		//Sets The Working Line To 1
 		int line = 1;
 		int linen = 0;
-		//Loops Through All Lines And Parses Variables
+		//Loops Through All Lines And Parses The Code
 		for(String s : lines){
 			//Skips Lines In Loops Or Functions
 			if(line <= linen){
