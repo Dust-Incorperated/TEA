@@ -31,4 +31,9 @@ public class Function {
 	public List<Variable> getVariables() {
 		return variables;
 	}
+	
+	@Override
+	public String toString() {
+		return "Code" + code + " Variables" + variables;
+	}
 }

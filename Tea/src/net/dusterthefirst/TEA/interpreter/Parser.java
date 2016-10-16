@@ -20,7 +20,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class Parser {
 	
-	private static final Pattern functionRegex = Pattern.compile("function\\s*\\w+\\s*\\(\\s*\\w+\\s*(,\\s*\\w*)*\\s*\\)");
+	private static final Pattern functionRegex = Pattern.compile("function\\s*\\w+\\s*\\(\\s*\\w+\\s*(\\,\\s*\\w*)*\\s*\\)");
 	private static final Pattern variableRegex = Pattern.compile("var\\s*(\\w+(\\s*=\\s*((\"(.*\\s*)\")|([0-9]*)))*)");
 	private static final Pattern conditionalRegex = Pattern.compile("(while|if)\\s+.+");
 	/* I am not sure how the "for" loop is going to be syntaxed. I shall write a RegEx when necessary */
@@ -39,44 +39,55 @@ public class Parser {
 		ArrayList<String> lines = readFile(f);
 		//Sets The Working Line To 1
 		int line = 1;
+		int linen = 0;
 		//Loops Through All Lines And Parses Variables
 		for(String s : lines){
-			s = s.replaceAll("\\s+", "").toLowerCase();
-			Matcher variableMatcher = variableRegex.matcher(s);
-			Matcher functionMatcher = functionRegex.matcher(s);
-			Matcher conditionalMatcher = conditionalRegex.matcher(s);
-			
-			// Attempt to parse a variable
-			if (variableMatcher.matches()){
-				parseVariable(variableMatcher.group(), line, f, variables);
+			//Skips Lines In Loops Or Functions
+			if(line <= linen){
+				logger.log("Skipping Line " + line, "Parser");
+				line++;
+			}else{
+				logger.log("Parsing Line " + line, "Parser");
+				s = s.replaceAll("\\s+", "").toLowerCase();
+				Matcher variableMatcher = variableRegex.matcher(s);
+				Matcher functionMatcher = functionRegex.matcher(s);
+				Matcher conditionalMatcher = conditionalRegex.matcher(s);
+				
+				// Attempt to parse a variable
+				if (variableMatcher.matches()){
+					parseVariable(variableMatcher.group(), line, f, variables);
+				}
+				
+				// Attempt to parse a conditional (if, while, for)
+				else if (conditionalMatcher.matches()){
+					//Shifts Reader To Bottom Of Loop
+					linen = parseLoop(conditionalMatcher.group(1), conditionalMatcher.group(), line, f, lines);
+				}
+				
+				// Attempt to parse a function
+				else if (functionMatcher.matches()){
+					//Shifts Reader To Bottom Of Function
+					linen = parseFunction(functionMatcher.group(), line, f, lines, functions);
+				}
+				
+				// If all else fails, render it as a piece of code
+				else{
+					codes.add(s);
+				}
+				
+				//Sets Working Line To the Current Line +1
+				line++;
 			}
-			
-			// Attempt to parse a conditional (if, while, for)
-			else if (conditionalMatcher.matches()){
-				parseLoop(conditionalMatcher.group(1), conditionalMatcher.group(), line, f, lines);
-			}
-			
-			// Attempt to parse a function
-			else if (functionMatcher.matches()){
-				parseFunction(functionMatcher.group(), line, f, lines, functions);
-			}
-			
-			// If all else fails, render it as a piece of code
-			else{
-				codes.add(s);
-			}
-			
-			//Sets Working Line To the Current Line +1
-			line++;
 		}
 		
 		//Returns The Parsed Code
 		return new ParsedCode(variables, functions, flows, codes);
 	}
 	
-	private static void parseLoop(String string, String s, int line, File f, ArrayList<String> lines) {
+	private static int parseLoop(String string, String s, int line, File f, ArrayList<String> lines) {
 		logger.log(ChatColor.YELLOW + "Coming Soon", "Parser");
-		logger.log(ChatColor.LIGHT_PURPLE + "stuff: " + string + "\n\rS:" + s , "POOPER");
+		logger.log(ChatColor.LIGHT_PURPLE + "stuff: " + string + "\n\rS:" + s , "Parser");
+		return line;
 	}
 
 	//Parses A Variable
@@ -128,12 +139,12 @@ public class Parser {
 	}
 
 	//Parses A Function
-	private static void parseFunction(String s, int line, File f, ArrayList<String> lines, Map<String, Function> functions) {
+	private static int parseFunction(String s, int line, File f, ArrayList<String> lines, Map<String, Function> functions) {
 		s = s.trim().toLowerCase();
 		//Catches If There Is An Error
 		try {
 			//Removes The 'Function' From The Line
-			s = s.replace("function ", "");
+			s = s.replaceFirst("function", "");
 			//Splits The Function By Name And Values
 			String[] split = s.split("\\(", 2);
 			
@@ -163,14 +174,16 @@ public class Parser {
 				}
 				//Adds Current Line To The Code
 				function.getCode().add(line1);
+				line++;
 			}
 			//Adds The Function To The Function Hash Map
 			functions.put(function.getName(), function);
 			//Logs Finding Of The Function
-			logger.log("Function " + function.getName() + ", And A Value Of " + function.getCode().toString() + ", And Variables Set As " + function.getVariables().toString(), f.getName());
+			logger.log("End Line:" + line + " Function " + function.getName() + ", And A Value Of " + function.getCode().toString() + ", And Variables Set As " + function.getVariables().toString(), f.getName());
 		} catch (Exception e) {
 			logger.error(ChatColor.RED + "Error In Declairing A Function At Line " + line, f.getName());
 		}
+		return line + 1;
 	}
 	
 	//Reads The Given

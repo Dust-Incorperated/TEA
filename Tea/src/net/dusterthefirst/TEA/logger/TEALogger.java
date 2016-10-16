@@ -67,7 +67,7 @@ public class TEALogger {
 		}
 	}
 
-	public void logDebugInfo() {
+	public String logDebugInfo() {
 		//Logs A Message
 		this.debug(ChatColor.LIGHT_PURPLE + "System Info For Debugging:");
 		
@@ -88,6 +88,7 @@ public class TEALogger {
 	    /* Total memory currently available to the JVM */
 	    this.debug(ChatColor.LIGHT_PURPLE + "Total memory available to JVM: " + 
 	        Runtime.getRuntime().totalMemory()/1000000 + "MB");
+	    return "";
 	}
 	
 }

@@ -17,7 +17,6 @@ import net.dusterthefirst.TEA.update.Checker;
 import net.dusterthefirst.TEA.utils.GenericUtils;
 import net.dusterthefirst.TEA.utils.internal.TEACmd;
 import net.dusterthefirst.TEA.variables.Variables;
-import net.dusterthefirst.TEA.variables.subsets.Test;
 
 public class Main extends JavaPlugin implements Listener{
 	
@@ -68,15 +67,16 @@ public class Main extends JavaPlugin implements Listener{
 			
 		} catch (Throwable e) {
 			String trace = GenericUtils.StacktraceToString(e.getStackTrace());
-			logger.error(ChatColor.RED + "OH NOES!!! TEA CRASHED", "Loader");
-			logger.error(ChatColor.RED + "There Has Been An Uncaught Exeption In TEA", "Loader");
-			logger.error(ChatColor.RED + "Make Sure You Are Running The Latest Version Of TEA", "Loader");
-			logger.error(ChatColor.RED + "PLEASE SEND THE BELOW INFORMATION BETWEEN THE LINES TO THE DEVELOPER THROUGH THE LINK BELOW", "logger");
-			logger.error(ChatColor.RED + "https://github.com/DusterTheFirst/TEA/issues", "Loader");
-			logger.error(ChatColor.RED + "-----------------------------------", "Loader");
-			logger.error(ChatColor.YELLOW + trace, "Loader");
-			logger.logDebugInfo();
-			logger.error(ChatColor.RED + "-----------------------------------", "Loader");
+			logger.error("\n\r" + 
+			ChatColor.RED + "OH NOES!!! TEA CRASHED" + "\n\r" + 
+			ChatColor.RED + "There Has Been An Uncaught Exeption In TEA" + "\n\r" + 
+			ChatColor.RED + "Make Sure You Are Running The Latest Version Of TEA"+ "\n\r" + 
+			ChatColor.RED + "PLEASE SEND THE BELOW INFORMATION BETWEEN THE LINES TO THE DEVELOPER THROUGH THE LINK BELOW" + "\n\r" + 
+			ChatColor.RED + "https://github.com/DusterTheFirst/TEA/issues" + "\n\r" + 
+			ChatColor.RED + "-----------------------------------" + "\n\r" + 
+			ChatColor.YELLOW + trace + "\n\r" + 
+			logger.logDebugInfo() + "\n\r" + 
+			ChatColor.RED + "-----------------------------------", "Loader");
 		}
 		
 		//TODO Remove TEST

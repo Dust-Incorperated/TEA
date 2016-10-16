@@ -45,8 +45,5 @@ public abstract class TEAVariable{
 	public String toString() {
 		return variables.toString();
 	}
-	
-	public static Class<?>[] getClasses(){
-		return TEAVariable.class.getClasses();
-	}
 }
+
