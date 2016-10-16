@@ -20,7 +20,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class Parser {
 	
-	private static final Pattern functionRegex = Pattern.compile("function\\s*\\w+\\s*\\(\\s*\\w+\\s*(\\,\\s*\\w*)*\\s*\\)");
+	private static final Pattern functionRegex = Pattern.compile("function\\s*\\w+\\s*\\(\\s*\\w*\\s*(,\\s*\\w*)*\\s*\\)");
 	private static final Pattern variableRegex = Pattern.compile("var\\s*(\\w+(\\s*=\\s*((\"(.*\\s*)\")|([0-9]*)))*)");
 	private static final Pattern conditionalRegex = Pattern.compile("(while|if)\\s+.+");
 	/* I am not sure how the "for" loop is going to be syntaxed. I shall write a RegEx when necessary */
