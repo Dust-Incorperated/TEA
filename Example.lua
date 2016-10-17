@@ -20,6 +20,10 @@ end
 if true then
 elseif false then
 else
+
+Events:
+on event do
+
 end
 
 
