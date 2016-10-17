@@ -1,22 +1,26 @@
 Example syntax:
 
 Loops:
-For I in joe do
-End
+for I in joe do
+end
+
 for I=0,I<12,I++ do
 end
-While true do
-End
-Repeate 
-Until true
+
+while true do
+end
+
+repeat 
+until true
 
 Conditionals:
-If true then
-End
-If true then
-Elseif false then
-Else
-End
+
+if true then
+end
+if true then
+elseif false then
+else
+end
 
 
 
